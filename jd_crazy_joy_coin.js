@@ -168,8 +168,6 @@ if ($.isNode()) {
   let count = 0
   while (true) {
     count++
-    if (count > 999 ) { console.log(`\n结束循环wyw20201224设置\n`);
-      return; }
     console.log(`============开始第${count}次挂机=============`)
     for (let i = 0; i < cookiesArr.length; i++) {
       if (cookiesArr[i]) {
@@ -230,7 +228,7 @@ async function jdJxStory() {
   for (let idx in obj) {
     const vo = obj[idx]
     if (idx < 34 && vo.length >= 2) {
-      await mergeJoy(vo[0], vo[1])
+      //await mergeJoy(vo[0], vo[1])
       await $.wait(3000)
     }
   }
@@ -414,12 +412,17 @@ function getCoin() {
             if (data.data && data.data.tryMoneyJoyBeans) {
               console.log(`分红狗生效中，预计获得 ${data.data.tryMoneyJoyBeans} 京豆奖励`)
             }
-            if (data.data && data.data.totalCoinAmount)
-              $.coin = data.data.totalCoinAmount
+            if (data.data && data.data.totalCoinAmount) {
+              $.coin = data.data.totalCoinAmount;
+            } else {
+              $.coin = `获取当前金币数量失败`
+            }
             if (data.data && data.data.luckyBoxRecordId) {
               await openBox('LUCKY_BOX_DROP',data.data.luckyBoxRecordId)
-            } else
-              $.log(`产出金币信息获取失败`)
+            }
+            if (data.data) {
+              $.log(`此次在线收益：获得 ${data.data['coins']} 金币`)
+            }
           }
         }
       } catch (e) {
@@ -432,7 +435,6 @@ function getCoin() {
 }
 
 function openBox(eventType = 'LUCKY_BOX_DROP', boxId) {
-  console.log(`openBox:${eventType}`)
   let body = { eventType, "eventRecordId": boxId}
   return new Promise(async resolve => {
     $.get(taskUrl('crazyJoy_event_getVideoAdvert', JSON.stringify(body)), async (err, resp, data) => {
